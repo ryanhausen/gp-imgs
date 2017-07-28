@@ -86,8 +86,23 @@ def _data_grab(morph, path, count, silent, bands, log_scale, orig):
 
 def _sbp_grab(morph, band, log_scale):
     data = None
+
+    if 'orig_sbp.json' not in os.listdir('.'):
+        all_rs, all_is = [], []
+        for spheroid in spheroids:
+            _id, img, segmap = spheroid
+            rvals, ivals = it.sbp(img, segmap==_id)
+
+            all_rs.append(rvals)
+            all_is.append(ivals)
+
+
+
+
+
     with open('orig_sbp.json', 'r') as f:
         data = json.load(f)
+
     data = data[morph][band]
 
     if log_scale:

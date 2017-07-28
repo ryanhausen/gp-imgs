@@ -1,0 +1,37 @@
+{
+   "restore":"false",
+   "trans_func":"",
+   "global_avg_pool":"true",
+   "label_noise":0.0001,
+   "test_progress":"../report/run_2/test_progress.csv",
+   "band_trans_func":"",
+   "epoch_limit":200,
+   "train_progress":"../report/run_2/train_progress.csv",
+   "nesterov":"true",
+   "print":"false",
+   "train_size":0.8,
+   "model_dir":"../models/run_2/",
+   "learning_rate_reduce":"",
+   "momentum":0.99,
+   "n_classes":5,
+   "bands":[
+      "v",
+      "z",
+      "h",
+      "j"
+   ],
+   "rtrn_eval":"true",
+   "batch_size":110,
+   "decay_base":0.96,
+   "train":"true",
+   "2016_update":"true",
+   "start_learning_rate":0.001,
+   "block_config":[
+      2,
+      4,
+      6,
+      8
+   ],
+   "decay_steps":"",
+   "save_progress":"true"
+}

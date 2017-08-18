@@ -16,8 +16,10 @@ def img_center(img, src_map):
     m01 = moment(0, 1)
     m10 = moment(1, 0)
 
-    x_centroid = int(round(m10 / m00))
-    y_centroid = int(round(m01 / m00))
+    #x_centroid = int(round(m10 / m00))
+    #y_centroid = int(round(m01 / m00))
+    x_centroid = m10 / m00
+    y_centroid = m01 / m00
 
     return (x_centroid, y_centroid)
 
@@ -112,7 +114,9 @@ def radial_bin_image(img,
                      input_re=False,
                      input_center=False,
                      re_normed=False,
-                     ie_normed=False):
+                     ie_normed=False,
+                     return_ie=False,
+                     return_re=False):
 
     Itot = img[src_map].sum()
 
@@ -120,7 +124,7 @@ def radial_bin_image(img,
 
     r_vals ={}
     for y, x in zip(*np.where(src_map)):
-        r = np.sqrt((x-cx)**2 + (y-cy)**2) * 0.06
+        r = np.sqrt((x-cx)**2 + (y-cy)**2)
         r_vals.setdefault(r, []).append(img[y,x])
 
     Re, Ie, Itmp, count = None, None, 0.0, 0
@@ -155,7 +159,14 @@ def radial_bin_image(img,
             tmp[r/Re] = r_vals[r]
         r_vals = tmp
 
-    return r_vals
+    rtn_val = [r_vals]
+
+    if return_ie:
+        rtn_val.append(Ie)
+    if return_re:
+        rtn_val.append(Re)
+
+    return rtn_val[0] if len(rtn_val)==1 else rtn_val
 
 def signal_to_noise(img, src_map, noise_map):
     # not sure I want this in the larger namespace

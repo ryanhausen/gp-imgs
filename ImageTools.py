@@ -41,6 +41,28 @@ def img_cov(img, src_map):
 
     return np.array([[mu20, mu11],[mu11, mu02]])
 
+def rs_fs_ie_re(img, src_map, img_center=None):
+    Itot = img[src_map].sum()
+    cx, cy = img_center if img_center else img_center(img,src_map)
+    xs, ys = np.meshgrid(np.arange(img.shape[0]), np.arange(img.shape[1]).T)
+
+    rs = np.sqrt(np.square(cx-xs) + np.square(cy-ys))
+    
+    rs = rs[src_map]
+    fs = img[src_map]
+    
+    sorted_rs = np.argsort(rs)
+    int_fs = np.cumsum(fs[sorted_rs]/Itot)
+    re_idx = np.square(int_fs-0.5).argmin()
+
+    rs = rs[sorted_rs]
+    fs = fs[sorted_rs]
+    
+    re = rs[re_idx]
+    ie = fs[re_idx-3:re_idx+3].mean()
+    
+    return rs, fs, ie, re
+
 def axis_ratio(img, src_map):
     cov = img_cov(img, src_map)
     evals, _ = np.linalg.eig(cov)

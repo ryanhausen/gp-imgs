@@ -202,6 +202,74 @@ def draw_alpha(shape, loc, scale, size=1,
 
     return vals[0] if size==1 else vals
 
+def loessc(x,y,dx=None):
+    #dx = 0.1*(max(x)-min(x))
+    if dx is None:
+        dx = 1.0e-3*np.abs(max(x)-min(x))
+    y_l = np.zeros(len(y),dtype=np.float32)
+    w_l = np.zeros(len(y),dtype=np.float32)
+
+    for i in range(len(x)):
+        flag = 0
+        dxt = dx
+        idx = (np.abs(x-x[i])<dxt).nonzero()
+        xx = x[idx]
+        yy = y[idx]
+
+        wx = (1.-(np.abs(xx-x[i])/dxt)**3)**3
+        nj = len(wx)
+
+        y_l[i] = 0.0
+        if(nj>0):
+            for j in range(nj):
+                y_l[i] += wx[j]*yy[j]
+                w_l[i] += wx[j]
+        else:
+            y_l[i] = y[i]
+            w_l[i] = 1.
+        y_l[i] = y_l[i]/w_l[i]
+
+        if((x[i]-x.min())<dx):
+            dxta = np.abs(x[i]-x.min())
+            idx = (np.abs(x-x[i])<dxta).nonzero()
+            xx = x[idx]
+            yy = y[idx]
+            wx = (1.-(np.abs(xx-x[i])/dxta)**3)**3
+            nj = len(wx)
+
+            y_l[i] = 0.0
+            w_l[i] = 0.0
+            if(nj>0):
+                for j in range(nj):
+                    y_l[i] += wx[j]*yy[j]
+                    w_l[i] += wx[j]
+            else:
+                y_l[i] += y[i]
+                w_l[i] += 1.
+
+            y_l[i] = y_l[i]/w_l[i]
+
+        if((x.max()-x[i])<dx):
+            dxta = np.abs(x.max()-x[i])
+            idx = (np.abs(x-x[i])<dxta).nonzero()
+            xx = x[idx]
+            yy = y[idx]
+            wx = (1.-(np.abs(xx-x[i])/dxta)**3)**3
+            nj = len(wx)
+
+            y_l[i] = 0.0
+            w_l[i] = 0.0
+            if(nj>0):
+                for j in range(nj):
+                    y_l[i] += wx[j]*yy[j]
+                    w_l[i] += wx[j]
+            else:
+                y_l[i] += y[i]
+                w_l[i] += 1.
+
+            y_l[i] = y_l[i]/w_l[i]
+    return y_l
+
 def get_possible_re():
     return np.unique(it.radial_frame(84, 84, 42, 42)).flatten()
 

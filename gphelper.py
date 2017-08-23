@@ -10,6 +10,7 @@ class GPHelper(object):
     def __init__(self,restore_file=None):
         if restore_file:
             X, Y, a, k = GPHelper._load_params(restore_file)
+            self.X = X
             gp = GaussianProcessRegressor(kernel=k, alpha=a, optimizer=None)
             self._gp = gp.fit(X, Y)
             
@@ -40,13 +41,14 @@ class GPHelper(object):
             json.dump(params, f, sort_keys=True, indent=4)
         
     def fit(self, X, Y, alpha):
+        self.X = X
         self._gp = GaussianProcessRegressor(alpha=alpha).fit(X, Y)
         return self
         
     def predict(self, X, return_std=False, return_cov=False):
         return self._gp.predict(X, return_std=return_std, return_cov=return_cov)
         
-    def sample(self, X, num_samples=1, monotonic=True):
+    def sample(self, X, num_samples=1, monotonic=True, smooth=False):
         # we need to ensure that all samples are monotonically decreasing
         mono_dec = lambda s: np.all(np.diff(s) <= 0)
         
@@ -61,8 +63,12 @@ class GPHelper(object):
                 print('Drawing Samples'+'.'*num_dots+' '*(5-num_dots), end='\r')
                 sample = self._gp.sample_y(X, random_state=np.random.randint(0,1e9))
                 
-            samples.append(sample)
+            if smooth:
+                sample = dt.loessc(X,sample,1.5)
+            samples.append(sample.flatten()[:,np.newaxis])
             
+        if len(samples)==1:
+            samples=samples[0]
         samples = np.atleast_2d(np.array(samples))
         
         return samples

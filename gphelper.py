@@ -40,9 +40,10 @@ class GPHelper(object):
         with open(save_file, 'w') as f:
             json.dump(params, f, sort_keys=True, indent=4)
         
-    def fit(self, X, Y, alpha):
+    def fit(self, X, Y, alpha, kernel=None, optimizer='fmin_l_bfgs_b'):
         self.X = X
-        self._gp = GaussianProcessRegressor(alpha=alpha).fit(X, Y)
+        gp = GaussianProcessRegressor(kernel=kernel,alpha=alpha, optimizer=optimizer)
+        self._gp = gp.fit(X, Y)
         return self
         
     def predict(self, X, return_std=False, return_cov=False):

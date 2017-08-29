@@ -300,7 +300,23 @@ def get_param_from_dist(morph, param):
     else:
         raise Exception('Distribution Not Supported')
 
+def pad_line(x, y, num_pad, num_fit, append=True, degree=2):
+    # get mean diff for xs to pad with
+    diff = np.diff(x).mean()
 
+    if append:
+        pad_x = np.linspace(x.max()+diff , x.max()+num_pad*diff, num_fit)
+        poly_y = np.poly1d(np.polyfit(x[-num_fit:], y[-num_fit:], degree))
+    else:
+        pad_x = np.linspace(x.min()-num_pad*diff, x.min()-diff, num_fit)
+        poly_y = np.poly1d(np.polyfit(x[:num_fit], y[:num_fit], degree))
+
+    pad_y = poly_y(pad_x)
+
+    xs = (x, pad_x) if append else (pad_x, x)
+    ys = (y, pad_y) if append else (pad_y, y)
+
+    return np.concatenate(xs), np.concatenate(ys)
 
 def normalize(collection):
     denom = 0.0

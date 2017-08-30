@@ -74,7 +74,7 @@ class GPHelper(object):
     def predict(self, X, return_std=False, return_cov=False):
         return self._gp.predict(X, return_std=return_std, return_cov=return_cov)
 
-    def sample(self, X, num_samples=1, monotonic=True, smooth=False):
+    def sample(self, X, num_samples=1, monotonic=True, enforce_re=False):
         # we need to ensure that all samples are monotonically decreasing
         mono_dec = lambda s: np.all(np.diff(s) <= 0)
 
@@ -83,14 +83,12 @@ class GPHelper(object):
             count = 1
 
             sample = self._gp.sample_y(X, random_state=np.random.randint(0,1e9))
-            while mono_dec(sample.flatten())==False and monotonic:
+            while (mono_dec(sample.flatten())==False and monotonic):
                 num_dots = count % 4
                 count += 1
                 print('Drawing Samples'+'.'*num_dots+' '*(5-num_dots), end='\r')
                 sample = self._gp.sample_y(X, random_state=np.random.randint(0,1e9))
 
-            if smooth:
-                sample = dt.loessc(X,sample,1.5)
             samples.append(sample.flatten()[:,np.newaxis])
 
         if len(samples)==1:

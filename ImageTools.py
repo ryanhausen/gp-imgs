@@ -41,9 +41,9 @@ def img_cov(img, src_map):
 
     return np.array([[mu20, mu11],[mu11, mu02]])
 
-def rs_fs_ie_re(img, src_map, img_center=None):
+def rs_fs_ie_re(img, src_map, center=None):
     Itot = img[src_map].sum()
-    cx, cy = img_center if img_center else img_center(img,src_map)
+    cx, cy = center if center else img_center(img,src_map)
     xs, ys = np.meshgrid(np.arange(img.shape[0]), np.arange(img.shape[1]).T)
 
     rs = np.sqrt(np.square(cx-xs) + np.square(cy-ys))

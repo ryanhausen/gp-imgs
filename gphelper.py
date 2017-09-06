@@ -83,14 +83,13 @@ class GPHelper(object):
             count = 1
 
             seed = seed if seed else np.random.randint(0, 1e9)
-            sample = self._gp.sample_y(X, random_state=seed)
+            sample = self._gp.sample_y(X, random_state=np.random.randint(0, 1e9))
             while (mono_dec(sample.flatten())==False and monotonic):
                 num_dots = count % 4
                 count += 1
                 print('Drawing Samples'+'.'*num_dots+' '*(5-num_dots), end='\r')
                 seed = np.random.randint(0, 1e9)
-                sample = self._gp.sample_y(X, random_state=seed)
-
+                sample = self._gp.sample_y(X, random_state=np.random.randint(0, 1e9))
             samples.append(sample.flatten()[:,np.newaxis])
 
         if len(samples)==1:

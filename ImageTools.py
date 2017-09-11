@@ -41,14 +41,14 @@ def img_cov(img, src_map):
 
     return np.array([[mu20, mu11],[mu11, mu02]])
 
-def rs_fs_ie_re(img, src_map, center=None):
+def rs_fs_ie_re(img, src_map, center=None, re_atleast=None):
     Itot = img[src_map].sum()
     cx, cy = center if center else img_center(img,src_map)
     xs, ys = np.meshgrid(np.arange(img.shape[0]), np.arange(img.shape[1]).T)
 
-    rs = np.sqrt(np.square(cx-xs) + np.square(cy-ys))
+    raw_rs = np.sqrt(np.square(cx-xs) + np.square(cy-ys))
     
-    rs = rs[src_map]
+    rs = raw_rs[src_map]
     fs = img[src_map]
     
     sorted_rs = np.argsort(rs)
@@ -60,6 +60,10 @@ def rs_fs_ie_re(img, src_map, center=None):
     
     re = rs[re_idx]
     ie = fs[re_idx-3:re_idx+3].mean()
+    
+    if re_atleast:
+        res = rs/re
+        additional_pixels = np.logical_and(~src_map, res<=5.0)
     
     return rs, fs, ie, re
 

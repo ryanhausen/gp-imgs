@@ -62,9 +62,19 @@ def rs_fs_ie_re(img, src_map, center=None, re_atleast=None):
     ie = fs[re_idx-3:re_idx+3].mean()
     
     if re_atleast:
-        res = rs/re
-        additional_pixels = np.logical_and(~src_map, res<=5.0)
-    
+        res = (raw_rs/re).reshape(84,84)
+        expand_map = np.logical_or(src_map, res<=re_atleast)
+        
+        rs = raw_rs[expand_map]
+        fs = img[expand_map]
+        Itot = img[expand_map].sum()
+
+        sorted_rs = np.argsort(rs)
+        int_fs = np.cumsum(fs[sorted_rs]/Itot)
+
+        rs = rs[sorted_rs]
+        fs = fs[sorted_rs]
+
     return rs, fs, ie, re
 
 def axis_ratio(img, src_map):

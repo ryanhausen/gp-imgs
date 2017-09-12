@@ -67,10 +67,10 @@ def rs_fs_ie_re(img, src_map, center=None, re_atleast=None):
         
         rs = raw_rs[expand_map]
         fs = img[expand_map]
-        Itot = img[expand_map].sum()
+        #Itot = img[expand_map].sum()
 
         sorted_rs = np.argsort(rs)
-        int_fs = np.cumsum(fs[sorted_rs]/Itot)
+        int_fs = np.cumsum(fs[sorted_rs])
 
         rs = rs[sorted_rs]
         fs = fs[sorted_rs]

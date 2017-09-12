@@ -77,6 +77,9 @@ def rs_fs_ie_re(img, src_map, center=None, re_atleast=None):
 
     return rs, fs, ie, re
 
+def iterative_profile_expansion(img, segmap):
+    None
+
 def axis_ratio(img, src_map):
     cov = img_cov(img, src_map)
     evals, _ = np.linalg.eig(cov)

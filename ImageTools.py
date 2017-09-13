@@ -67,7 +67,7 @@ def rs_fs_ie_re(img, src_map, center=None, re_atleast=None):
         
         rs = raw_rs[expand_map]
         fs = img[expand_map]
-        #Itot = img[expand_map].sum()
+        Itot = img[expand_map].sum()
 
         sorted_rs = np.argsort(rs)
         int_fs = np.cumsum(fs[sorted_rs])
@@ -77,8 +77,23 @@ def rs_fs_ie_re(img, src_map, center=None, re_atleast=None):
 
     return rs, fs, ie, re
 
-def iterative_profile_expansion(img, segmap):
-    None
+def iterative_profile_expansion(img, segmap, img_id):
+    
+    rs, fs, ie, re = rs_fs_ie_re(img, segmap==img_id, re_atleast=5)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 def axis_ratio(img, src_map):
     cov = img_cov(img, src_map)

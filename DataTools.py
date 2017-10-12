@@ -202,6 +202,50 @@ def draw_alpha(shape, loc, scale, size=1,
 
     return vals[0] if size==1 else vals
 
+
+# parallel loess
+from itertools import starmap
+from multiprocessing import Pool
+
+def dx_collections(X, Y, dx):
+    collections = []
+    
+    for x in X:
+        dist_x = np.abs(X-x)
+        dist_x = dist_x<=dx
+        collections.append((x, X[dist_x], Y[dist_x]))
+       
+    return collections
+    
+def weight_function(d):
+    return (1 - (d/d.max())**3)**3
+        
+def loess_point(x, X, Y):
+    if len(Y) == 1:
+        return Y
+
+    _Y = weight_function(np.abs(X-x))*Y        
+    y = np.poly1d(np.polyfit(X, _Y, 2))(x)
+
+    return y
+
+def loessc_p(x, y, dx, pnum=1):
+    if dx is None:
+        dx = 1.0e-3*np.abs(max(x)-min(x))
+    
+    collections = dx_collections(x, y, dx)
+    
+    if pnum==1:
+        y = starmap(loess_point, collections)
+    else:
+        with Pool(processes=pnum) as p:
+            y = p.starmap(loess_point, collections)
+
+    return np.array(list(y)).flatten()
+# parallel loess
+    
+
+
 def loessc(x,y,dx=None):
     #dx = 0.1*(max(x)-min(x))
     if dx is None:

@@ -49,10 +49,12 @@ class GPHelper(object):
         gp = make_gp(kernel, None).fit(X, Y)
 
         def optimize_sigma_n(n):
+            if n<=0 : n=1e-3
             theta = (np.log(n), np.log(length_scale))
             return -gp.log_marginal_likelihood(theta=theta)
 
         def optimize_length_scale(l):
+            if l<=0 : l=1e-3
             theta = (np.log(sigma_n), np.log(l))
             return -gp.log_marginal_likelihood(theta=theta)
 
